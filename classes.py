@@ -3,38 +3,58 @@ import json
 import datetime
 
 
+
 class Agent:
     def __init__(self, name, address, err):
         self.name = name
         self.address = address
         self.err = err
-        self.counter = 0
+
+        try:
+            with open(self.name + '.json', 'w') as f:
+                    json.dump([], f)
+
+        except OSError:
+            print("Can't create " + self.name + '.json')
 
     def get_data(self):
-        self.write_data(self.name + ".txt", "request number %d" % self.counter)
-        self.counter += 1
         try:
             r = requests.get(self.address + "cpu")
-            data = json.loads(r.text)
-            text = str(data["current_time"]) + " : " + str(data["cpu"])
-            self.write_data(self.name + ".txt", text)
+            cpu_json = json.loads(r.text)
 
             r = requests.get(self.address + "memory")
-            data = json.loads(r.text)
-            text = str(data["current_time"]) + " : " + str(data["memory"])
-            self.write_data(self.name + ".txt", text)
+            memory_json = json.loads(r.text)
 
-        except:
-            self.write_data(self.name + ".txt", "Error, check " + self.err + " to see more details")
-            self.write_data(self.err + ".txt", datetime.datetime.now().strftime("%y/%m/%d %H:%M:%S")
- + "  " + self.name + " is unavailable")
+            try:
+                self.append_data(self.create_json(cpu_json, memory_json))
 
-        finally:
-            self.write_data(self.name + ".txt", "")
+            except KeyError:
+                print(self.name + " can't connect to db")
 
-    def write_data(self, filename,  text):
+        except requests.RequestException:
+            try:
+                with open(self.err, "a") as f:
+                    f.write(datetime.datetime.now().strftime("%y/%m/%d %H:%M:%S")
+ + "  " + self.name + " is unavailable" + "\n")
+                self.append_data("error")
+
+            except OSError:
+                print("Can't open " + self.err)
+
+    def append_data(self, data):
         try:
-            with open(filename, "a") as f:
-                f.write(text + "\n")
-        except:
-            print("Can't open " + self.name + ".txt")
+                with open(self.name + '.json') as f:
+                    data_json = json.load(f)
+                data_json.append(data)
+
+                with open(self.name + '.json', 'w') as f:
+                    json.dump(data_json, f)
+
+        except OSError: # parent of IOError, OSError *and* WindowsError where available
+            print("Can't open " + self.name + '.json')
+
+    def create_json(self, cpu, memory):
+        return {str(cpu["current_time"]) : { "cpu" : cpu["cpu"], "memory" : memory["memory"]}}
+
+
+
