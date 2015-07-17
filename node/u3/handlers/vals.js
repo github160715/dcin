@@ -15,24 +15,34 @@ function parse(res){
     return x;
 }
 
-function logger(er, re, body) {
-    if (er){console.log(er);}
-    else {
-        dict['used'] = parse(body);
-        console.log(dict);
-        xxx.status(200).json(dict);
-    }
-}
 function cpu(req, res){
-    request.get(url1, logger);
+    request.get(url1, function (er, re, body){
+        if (er){console.log(er);}
+        else {
+            var parsed = parse(body);
+            dict['time'] = parsed.time;
+            dict['cpu'] = parsed.cpu_value;;
+            xxx.status(200).json(dict);
+        }
+    });
     xxx = res;
 }
 function memory(req, res){
     request.get(url2, function (er, re, body){
         if (er){console.log(er);}
         else {
-            dict['free'] = parse(body);
-            request.get(url3, logger);
+            var parsed = parse(body);
+            dict['time'] = parsed.time;
+            dict['total'] = parsed.memory_value;
+            request.get(url3, function (er, re, body){
+                if (er){console.log(er);}
+                else {
+                    dict['used'] = parseFloat((parse(body)).memory_value);
+                    var t = parseFloat(dict['used']) + parseFloat(dict['total']);
+                    dict['total'] = t;
+                    xxx.status(200).json(dict);
+                }
+            });
         }
     });
     xxx = res;
