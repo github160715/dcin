@@ -3,7 +3,6 @@ import json
 import datetime
 
 
-
 class Agent:
     def __init__(self, name, address, err):
         self.name = name
