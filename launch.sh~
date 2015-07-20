@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd $(dirname $(readlink -e "$0"))
+cd /home/natasha/Документы/project
 for ((x=1; x<3; x++)) do
 	docker run --name influxdb_${x} -d usr/influxdb
 	docker run -v $(pwd)/collectd/collectd_${x}.conf:/etc/collectd/collectd.conf \

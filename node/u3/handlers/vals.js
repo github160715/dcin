@@ -17,7 +17,8 @@ function parse(res){
 
 function cpu(req, res){
     request.get(url1, function (er, re, body){
-        if (er){console.log(er);}
+        var dict = {};
+        if (er){xxx.status(404).send(er.code);}
         else {
             var parsed = parse(body);
             dict['time'] = parsed.time;
@@ -29,13 +30,14 @@ function cpu(req, res){
 }
 function memory(req, res){
     request.get(url2, function (er, re, body){
-        if (er){console.log(er);}
+        var dict = {};
+        if (er){xxx.status(404).send(er.code);}
         else {
             var parsed = parse(body);
             dict['time'] = parsed.time;
             dict['total'] = parsed.memory_value;
-            request.get(url3, function (er, re, body){
-                if (er){console.log(er);}
+            var tmp = request.get(url3, function (er, re, body){
+                if (er){xxx.status(404).json(er.code);}
                 else {
                     dict['used'] = parseFloat((parse(body)).memory_value);
                     var t = parseFloat(dict['used']) + parseFloat(dict['total']);
