@@ -1,1 +1,0 @@
-select value from memory_value where type_instance='used' and host='localhost'

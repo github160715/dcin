@@ -1,8 +1,0 @@
-FROM ubuntu:14.04
-RUN apt-get update && apt-get install -y \
-	collectd \
-	curl
-#COPY collectd.conf /etc/collectd/collectd.conf
-EXPOSE 8096
-CMD collectd -f
-
