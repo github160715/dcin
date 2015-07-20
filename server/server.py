@@ -36,7 +36,11 @@ if __name__ == "__main__":
     agents = create_agents(confs)
 
     while True:
-        try:
-            execution(agents, period)
-        except:
-            continue
+        for agent in agents:
+            agent.get_data()
+        sleep(period)
+    # while True:
+    #     try:
+    #         execution(agents, period)
+    #     except:
+    #         continue
