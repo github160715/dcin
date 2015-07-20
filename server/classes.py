@@ -18,10 +18,10 @@ class Agent:
 
     def get_data(self):
         try:
-            r = requests.get(self.address + "cpu")
+            r = requests.get(self.address + "vals/cpu")
             cpu_json = json.loads(r.text)
 
-            r = requests.get(self.address + "memory")
+            r = requests.get(self.address + "vals/memory")
             memory_json = json.loads(r.text)
 
             try:
@@ -53,7 +53,7 @@ class Agent:
             print("Can't open " + self.name + '.json')
 
     def create_json(self, cpu, memory):
-        return {str(cpu["current_time"]) : { "cpu" : cpu["cpu"], "memory" : memory["memory"]}}
+        return {str(cpu["time"]) : { "cpu": cpu["cpu"], "total": memory["total"], "used": memory["used"]}}
 
 
 

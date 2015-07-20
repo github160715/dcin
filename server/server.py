@@ -6,6 +6,8 @@ from classes import Agent
 from time import sleep
 
 
+# Работает как демон, чтобы увидеть его "ps -x", чтобы выключить "sudo kill -9 pid"
+
 def create_agents(conf):
     list_of_agents = []
     for key in conf["agents"]:
@@ -36,44 +38,3 @@ if __name__ == "__main__":
             execution(agents, period)
         except:
             continue
-    # execution()
-    # with daemon.DaemonContext(working_directory='/home/mikhail/working/PycharmProjects/server', stdout=sys.stdout, stderr=sys.stderr):
-    #     confs = get_conf()
-    #     period = confs["period"]
-    #     agents = create_agents(confs)
-    #     while True:
-    #         for agent in agents:
-    #             agent.get_data()
-    #         sleep(period)
-    # agents, period = create_agents(get_conf())
-    #
-    # while True:
-    #     for agent in agents:
-    #         agent.get_data()
-    #     sleep(period)
-
-    # try:
-    #     with daemon.DaemonContext(working_directory='/home/mikhail/PycharmProjects/server', stdout=sys.stdout, stderr=sys.stderr):
-    #         confs = get_conf()
-    #         period = confs["period"]
-    #         raise KeyError
-    #         agents = create_agents(confs)
-    #         while True:
-    #             for agent in agents:
-    #                 agent.get_data()
-    #             sleep(period)
-    # except:
-    #     print("asda")
-    # with daemon.DaemonContext(working_directory='/home/mikhail/PycharmProjects/server', stdout=sys.stdout, stderr=sys.stderr):
-    #
-    #     try:
-    #         confs = get_conf()
-    #         period = confs["period"]
-    #         raise KeyError
-    #         agents = create_agents(confs)
-    #         while True:
-    #             for agent in agents:
-    #                 agent.get_data()
-    #             sleep(period)
-    #     except:
-    #         sys.exit(1)
