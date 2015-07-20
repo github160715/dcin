@@ -5,7 +5,7 @@ var url1 = "http://"+hostname+":8086/query?db=collectd&q=SELECT value FROM cpu_v
 var url2 = "http://"+hostname+":8086/query?db=collectd&q=SELECT value FROM memory_value WHERE type_instance='free' LIMIT 1";
 var url3 = "http://"+hostname+":8086/query?db=collectd&q=SELECT value FROM memory_value WHERE type_instance='used' LIMIT 1";
 var xxx;
-var dict={};
+//var dict={};
 function parse(res){
     var key = res.substring(res.indexOf('name')+7, res.indexOf('columns')-3);
     var i = res.indexOf('[['), j = res.indexOf(']]');
@@ -18,20 +18,23 @@ function parse(res){
 function cpu(req, res){
     request.get(url1, function (er, re, body){
         var dict = {};
-        if (er){xxx.status(404).send(er.code);}
+        if (er){console.log('var1');}
         else {
             var parsed = parse(body);
             dict['time'] = parsed.time;
-            dict['cpu'] = parsed.cpu_value;;
+            dict['cpu'] = parsed.cpu_value;
             xxx.status(200).json(dict);
         }
+    }).on('error', function (err){
+        console.log('var2');
+        xxx.status(404).send(err.code);
     });
     xxx = res;
 }
 function memory(req, res){
     request.get(url2, function (er, re, body){
         var dict = {};
-        if (er){xxx.status(404).send(er.code);}
+        if (er){/*xxx.status(404).send(er.code);*/}
         else {
             var parsed = parse(body);
             dict['time'] = parsed.time;
@@ -46,10 +49,11 @@ function memory(req, res){
                 }
             });
         }
-    });
+    }).on('error', function (err){
+            xxx.status(404).send(err.code);
+        });
     xxx = res;
 }
 
 module.exports.cpu = cpu;
 module.exports.memory = memory;
-
