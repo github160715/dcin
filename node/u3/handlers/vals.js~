@@ -1,11 +1,12 @@
 var http = require('http');
 var request = require('request');
 var hostname = "influxdb";
-var url1 = "http://"+hostname+":8086/query?db=collectd&q=SELECT value FROM cpu_value WHERE time > now() -"+p+"s LIMIT 1";
+var p = "30s";
+var url1 = "http://"+hostname+":8086/query?db=collectd&q=SELECT value FROM cpu_value WHERE time > now() -"+p+" LIMIT 1";
 var url2 = "http://"+hostname+
-    ":8086/query?db=collectd&q=SELECT value FROM memory_value WHERE type_instance='free' AND time > now() -"+p+"s LIMIT 1";
+    ":8086/query?db=collectd&q=SELECT value FROM memory_value WHERE type_instance='free' AND time > now() -"+p+" LIMIT 1";
 var url3 = "http://"+hostname+
-    ":8086/query?db=collectd&q=SELECT value FROM memory_value WHERE type_instance='used' AND time > now() -"+p+"s LIMIT 1";
+    ":8086/query?db=collectd&q=SELECT value FROM memory_value WHERE type_instance='used' AND time > now() -"+p+" LIMIT 1";
 var xxx;
 //var dict={};
 function parse(res){
