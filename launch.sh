@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 sudo /etc/init.d/docker start
 
 cd "$(dirname "$0")"
