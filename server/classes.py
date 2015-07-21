@@ -113,15 +113,6 @@ class Agent:
 
         except pymongo.errors.PyMongoError:
             print("error")
-        # self.db.agents.insert_one(
-        #     {
-        #         "name": self.name,
-        #         "info": {
-        #
-        #         }
-        #     }
-        # )
-
 
 
 
