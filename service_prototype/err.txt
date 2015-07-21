@@ -1,6 +1,0 @@
-15/07/20 17:58:08  agent2 is unavailable
-15/07/20 17:58:08  agent1 is unavailable
-15/07/20 17:58:12  agent2 is unavailable
-15/07/20 17:58:12  agent1 is unavailable
-15/07/20 17:58:22  agent2 is unavailable
-15/07/20 17:58:22  agent1 is unavailable

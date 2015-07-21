@@ -31,6 +31,7 @@ def execution(agents, period):
             sleep(period)
 
 if __name__ == "__main__":
+
     confs = get_conf()
     period = confs["period"]
     agents = create_agents(confs)
