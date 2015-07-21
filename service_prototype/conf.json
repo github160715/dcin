@@ -1,0 +1,9 @@
+{
+   "agents" :
+     {
+       "agent1" : "http://localhost:3001/",
+       "agent2" : "http://localhost:3002/"
+     },
+  "error_file" : "err.txt",
+  "period" : 10
+}
