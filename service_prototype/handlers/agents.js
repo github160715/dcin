@@ -75,21 +75,19 @@ function last_info(req, res){
         });
     });
 }
-var inf, sup;
+//localhost:3000/info/inf_date/sup_date
 function info(req, res){
+    var a = req.params.inf, b = req.params.sup;
     MongoClient.connect(mongoUrl, function (err, db){
         errf(req, err);
-        var collection = db.collection(collectionName);
-        collection.find({time : {$gt: inf, $lt: sup}}).toArray(
+        var collection = db.collection(Icollection);
+        collection.find({time : {$gt: new Date(a), $lt: new Date(b)}}).toArray(
             function (err, docs) {
-                if (err != null) {
-                    req.status(500).json({"error" : err.message});
-                    return;
-                }
+                errf(res, err);
                 res.status(200).json(docs);
             }
         );
-    })
+    });
 }
 module.exports.agents = agents;
 module.exports.status = status;
