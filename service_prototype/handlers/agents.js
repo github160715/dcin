@@ -52,25 +52,28 @@ function status(req, res){
         }
     );
 }
+function get_last(db, callback) {
+    var data = {}, ttt = 0;
+    db.collection('agents').find({}).each(function (err, docs){
+        if (docs == null) {
+            console.log(data);
+            return;
+        }
+        ttt++;
+        var r = db.collection('states').find({time : docs.last}).toArray(function (er, ds){
+            data[docs.name] = ds;
+            if (--ttt == 0) callback(data);
+        });
+    });
+}
 function last_info(req, res){
     MongoClient.connect(mongoUrl, function (err, db){
-        errf(req, err);
-        var collection = db.collection(collectionName);
-        collection.find({name : {search : ""}}).toArray(
-            function (err, docs) {
-                if (err != null) {
-                    req.status(500).json({"error" : err.message});
-                    return;
-                }
-                var a = {}, l = docs.length;
-                for (var i = 0; i < l; i++) {
-                    var t = docs[i].last;
-                    a[docs[i].name] = collection.find({time : t});
-                }
-                res.status(200).json(a);
-            }
-        );
-    })
+        errf(res, err);
+        get_last(db, function(data) {
+            db.close();
+            res.status(200).json(data);
+        });
+    });
 }
 var inf, sup;
 function info(req, res){
