@@ -54,18 +54,24 @@ function status(req, res){
     );
 }
 
-function find_last(db, callback) {
-    var cursor =db.collection(Icollection).find().toArray(function (err, docs) {
-        var data = {};
-        assert.equal(null, err);
-        for (var i = 0; i < docs.length; i++) {
-            data[docs[i].name] = docs[i].status;
+function get_last(db, callback) {
+    var data = {}, ttt = 0;
+    db.collection('agents').find({}).each(function (err, docs){
+        if (docs == null) {
+            console.log(data);
+            return;
         }
-        callback(data);
+        ttt++;
+        var r = db.collection('states').find({time : docs.last}).toArray(function (er, ds){
+            data[docs.name] = ds;
+            if (--ttt == 0) callback(data);
+        });
     });
 }
+
 function last_info(req, res){
     MongoClient.connect(mongoUrl, function (err, db){
+<<<<<<< HEAD
         var collection = db.collection(Icollection);
         collection.find({name : {search : ""}}).toArray(
             function (err, docs) {
@@ -82,22 +88,38 @@ function last_info(req, res){
             }
         );
     })
-}
-var inf, sup;
-function info(req, res){
-    MongoClient.connect(mongoUrl, function (err, db){
+||||||| merged common ancestors
         errf(req, err);
         var collection = db.collection(collectionName);
-        collection.find({time : {$gt: inf, $lt: sup}}).toArray(
+        collection.find({name : {search : ""}}).toArray(
             function (err, docs) {
                 if (err != null) {
                     req.status(500).json({"error" : err.message});
                     return;
                 }
-                res.status(200).json(docs);
+                var a = {}, l = docs.length;
+                for (var i = 0; i < l; i++) {
+                    var t = docs[i].last;
+                    a[docs[i].name] = collection.find({time : t});
+                }
+                res.status(200).json(a);
             }
         );
     })
+}
+//localhost:3000/info/inf_date/sup_date
+function info(req, res){
+    var a = req.params.inf, b = req.params.sup;
+    MongoClient.connect(mongoUrl, function (err, db){
+        errf(req, err);
+        var collection = db.collection(Icollection);
+        collection.find({time : {$gt: new Date(a), $lt: new Date(b)}}).toArray(
+            function (err, docs) {
+                errf(res, err);
+                res.status(200).json(docs);
+            }
+        );
+    });
 }
 module.exports.agents = agents;
 module.exports.status = status;
