@@ -1,9 +1,8 @@
-#!/usr/bin/env python3 
+#!/usr/bin/python3
 
 import json
 import daemon
 import os
-from sys import argv
 from classes import Agent
 from time import sleep
 
@@ -33,10 +32,10 @@ def execution(agents, period):
 
 if __name__ == "__main__":
 
-    os.chdir(os.path.dirname(argv[0]))
     confs = get_conf()
     period = confs["period"]
     agents = create_agents(confs)
+
     while True:
         try:
             execution(agents, period)
