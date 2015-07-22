@@ -5,7 +5,7 @@ var Acollection = "agents", Icollection = "states";
 
 
 var find_agents = function(db, callback) {
-    var cursor =db.collection('agents').find( ).toArray(function (err, docs) {
+    var cursor =db.collection(Acollection).find( ).toArray(function (err, docs) {
         var data = [];
         assert.equal(null, err);
         for (var i = 0; i < docs.length; i++) {
@@ -31,7 +31,7 @@ function agents(req, res) {
 }
 
 function find_status(db, callback) {
-    var cursor =db.collection('agents').find().toArray(function (err, docs) {
+    var cursor =db.collection(Acollection).find().toArray(function (err, docs) {
         var data = {};
         assert.equal(null, err);
         for (var i = 0; i < docs.length; i++) {
@@ -40,6 +40,7 @@ function find_status(db, callback) {
         callback(data);
     });
 }
+
 function status(req, res){
     MongoClient.connect(mongoUrl, function (err, db) {
             if (err != null) {
@@ -52,10 +53,20 @@ function status(req, res){
         }
     );
 }
+
+function find_last(db, callback) {
+    var cursor =db.collection(Icollection).find().toArray(function (err, docs) {
+        var data = {};
+        assert.equal(null, err);
+        for (var i = 0; i < docs.length; i++) {
+            data[docs[i].name] = docs[i].status;
+        }
+        callback(data);
+    });
+}
 function last_info(req, res){
     MongoClient.connect(mongoUrl, function (err, db){
-        errf(req, err);
-        var collection = db.collection(collectionName);
+        var collection = db.collection(Icollection);
         collection.find({name : {search : ""}}).toArray(
             function (err, docs) {
                 if (err != null) {
