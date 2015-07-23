@@ -30,8 +30,11 @@ def check_url(url):
 
 def create_agents(conf):
     list_of_agents = []
-    for item in conf["agents"]:
-        if len(item) != 3:
+    for (item, i) in zip(conf["agents"], range(len(conf["agents"]))):
+        if len(item) < 3:
+            continue
+        if len(item) == 4:
+            Agent(item[0], item[1], conf["error_file"]).delete_agent(i)
             continue
         check_url(item[1])
         list_of_agents.append(Agent(item[0], item[1], conf["error_file"]))

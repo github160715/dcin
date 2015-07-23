@@ -65,6 +65,26 @@ class Agent:
     def create_json(self, cpu, memory):
         return {str(cpu["time"]): {"cpu": cpu["cpu"], "total": memory["total"], "used": memory["used"]}}
 
+    def delete_agent(self, i):
+        try:
+            with open('conf.json') as f:
+                data_json = json.load(f)
+
+            data_json["agents"].pop(i)
+
+            with open('conf.json', 'w') as f:
+                json.dump(data_json, f)
+
+            try:
+                self.db.agents.delete_one({"name": self.name})
+                self.db.states.delete_many({"agent": self.name})
+
+            except pymongo.errors.PyMongoError:
+                print("error")
+
+        except OSError: # parent of IOError, OSError *and* WindowsError where available
+            print("Can't open " + self.name + '.json')
+
     def mongo_insert(self, data, on):
 
         if on:
@@ -72,13 +92,16 @@ class Agent:
             last = datetime.strptime(time, "%Y-%m-%dT%H:%M:%S.%fZ")
             status = "on"
 
-            self.db.states.insert_one({
-                "agent": self.name,
-                "time": last,
-                "cpu": data[time]["cpu"],
-                "total": data[time]["total"],
-                "used": data[time]["used"]
-            })
+            try:
+                self.db.states.insert_one({
+                    "agent": self.name,
+                    "time": last,
+                    "cpu": data[time]["cpu"],
+                    "total": data[time]["total"],
+                    "used": data[time]["used"]
+                })
+            except pymongo.errors.PyMongoError:
+                print("error")
         else:
             last = None
             status = "off"
