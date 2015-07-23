@@ -3,9 +3,11 @@
 import json
 import daemon
 import os
+import re
 from sys import argv
 from classes import Agent
 from time import sleep
+from urllib import request
 
 # "chmod +x server.py" - make executable
 # ./server.py - run executable
@@ -14,12 +16,22 @@ from time import sleep
 global last_modified
 
 
+def check_url(url):
+    regex = re.compile(
+        r'^(?:http|ftp)s?://' # http:// or https://
+        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
+        r'localhost|' #localhost...
+        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
+        r'(?::\d+)?' # optional port
+        r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+
+    if not re.match(regex, url) or url[-1] != '/':
+        raise ValueError
+
 def create_agents(conf):
     list_of_agents = []
     for key in conf["agents"]:
-        if conf["agents"][key][-1] != "/":
-            print("raising")
-            raise ValueError
+        check_url(conf["agents"][key])
         list_of_agents.append(Agent(key, conf["agents"][key], conf["error_file"]))
 
     return list_of_agents
@@ -64,26 +76,8 @@ if __name__ == "__main__":
     period = confs["period"]
     agents = create_agents(confs)
 
-
     while True:
-        for agent in agents:
-            agent.get_data()
-        sleep(period)
-
-        modified = update_time('conf.json')
-        if modified > last_modified:
-            print("changed")
-            last_modified = modified
-
-            try:
-                confs = get_conf()
-                period = confs["period"]
-                agents = create_agents(confs)
-            except ValueError:
-                continue
-
-                # while True:
-    #     try:
-    #         execution(agents, period)
-    #     except:
-    #         continue
+        try:
+            execution(agents, period)
+        except:
+            continue
