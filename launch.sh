@@ -1,8 +1,6 @@
 #!/bin/bash
 
 
-sudo /etc/init.d/docker start
-
 cd "$(dirname "$0")"
 
 for ((x=1; x<3; x++)) do
