@@ -66,6 +66,7 @@ class Agent:
         return {str(cpu["time"]): {"cpu": cpu["cpu"], "total": memory["total"], "used": memory["used"]}}
 
     def delete_agent(self, i):
+    # TODO удалять файл агента
         try:
             with open('conf.json') as f:
                 data_json = json.load(f)
@@ -84,6 +85,41 @@ class Agent:
 
         except OSError: # parent of IOError, OSError *and* WindowsError where available
             print("Can't open " + self.name + '.json')
+
+    def modify_agent(self, old_name, index):
+        print(old_name)
+        try:
+            self.db.agents.update_one(
+                {"name": old_name},
+                {"$set": {
+                    "name": self.name
+                }
+                }
+            )
+
+            self.db.states.update_many(
+            {"agent": old_name},
+            {"$set": {
+                "agent": self.name
+            }
+            }
+        )
+            try:
+                with open('conf.json') as f:
+                    data_json = json.load(f)
+
+                data_json["agents"][index] = data_json["agents"][index][:3]
+                print(data_json["agents"][index])
+
+                with open('conf.json', 'w') as f:
+                    json.dump(data_json, f)
+
+
+            except OSError: # parent of IOError, OSError *and* WindowsError where available
+                print("Can't open " + self.name + '.json')
+
+        except pymongo.errors.PyMongoError:
+            print("error")
 
     def mongo_insert(self, data, on):
 

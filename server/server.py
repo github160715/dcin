@@ -34,7 +34,11 @@ def create_agents(conf):
         if len(item) < 3:
             continue
         if len(item) == 4:
-            Agent(item[0], item[1], conf["error_file"]).delete_agent(i)
+            if item[3] == "delete":
+                Agent(item[0], item[1], conf["error_file"]).delete_agent(i)
+            continue
+        if len(item) == 5 and item[-1] == "modify":
+            Agent(item[0], item[1], conf["error_file"]).modify_agent(item[-2], i)
             continue
         check_url(item[1])
         list_of_agents.append(Agent(item[0], item[1], conf["error_file"]))
@@ -82,7 +86,24 @@ if __name__ == "__main__":
     agents = create_agents(confs)
 
     while True:
-        try:
-            execution(agents, period)
-        except:
-            continue
+        for agent in agents:
+            agent.get_data()
+        sleep(period)
+
+        modified = update_time('conf.json')
+        if modified > last_modified:
+            print("changed")
+            last_modified = modified
+
+            try:
+                confs = get_conf()
+                period = confs["period"]
+                agents = create_agents(confs)
+            except ValueError:
+                continue
+
+    # while True:
+    #     try:
+    #         execution(agents, period)
+    #     except:
+    #         continue
