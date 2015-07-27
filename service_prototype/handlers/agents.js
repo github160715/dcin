@@ -62,20 +62,11 @@ function errf(req, err){
 
 function get_last(db, callback) {
     var data = [], ttt = 0;
-    db.collection('agents').find({}).each(function (err, docs){
-        if (err || docs == null) {
-            callback([]);
-            return;
-        }
-        assert.equal(null, err);
+    db.collection('agents').find().each(function (err, docs){
+        if (docs == null) return;
         ttt++;
-        db.collection('states').find({time : docs.last}).toArray(function (er, ds){
-            console.log(ds);
-            if (er || ds == []) {
-                callback([]);
-                return
-            }
-            data.push(ds[0]);
+        db.collection('states').find({time: docs.last}).toArray(function (er, ds) {
+            if (err == null && er == null && ds.length > 0) data.push(ds[0]);
             if (!(--ttt)) callback(data);
         });
     });
