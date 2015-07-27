@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import json, requests, sys
+import json, requests, sys, pymongo
 from threading import Thread, Event
 from pymongo import MongoClient
 from daemon3x import daemon
@@ -21,28 +21,36 @@ class Thr(Thread):
             try:
                 cpu = (requests.get(self.doc['http'] + '/vals/cpu')).json()
                 mem = (requests.get(self.doc['http'] + '/vals/memory')).json()
-            except:
-                db.agents.update_one(
-                    {"_id" : self.doc["_id"]},
-                    {"$set": {"status": False}}
-                )
-                #self.stopped.set()
-            t = datetime.strptime(cpu['time'], "%Y-%m-%dT%H:%M:%S.%fZ")
-            res = {
-                "agent": self.doc['name'],
-                "time": t,
-                "cpu": cpu["cpu"],
-                "total": mem["total"],
-                "used": mem["used"],
-            }
-            try:
-                db.agents.update_one(
-                    {"_id" : self.doc["_id"]},
-                    {"$set": {"last": t,
+
+                t = datetime.strptime(cpu['time'], "%Y-%m-%dT%H:%M:%S.%fZ")
+                res = {
+                    "agent": self.doc['name'],
+                    "time": t,
+                    "cpu": cpu["cpu"],
+                    "total": mem["total"],
+                    "used": mem["used"],
+                }
+
+                try:
+                    db.agents.update_one(
+                        {"_id" : self.doc["_id"]},
+                        {"$set": {"last": t,
                               "status": True}})
-                db.states.insert_one(res)
-            except:
-                print("mongo error")
+                    db.states.insert_one(res)
+
+                except pymongo.errors.PyMongoError:
+                    print("mongo error")
+
+            except requests.RequestException:
+
+                try:
+                    db.agents.update_one(
+                        {"_id" : self.doc["_id"]},
+                        {"$set": {"status": False}}
+                    )
+
+                except pymongo.errors.PyMongoError:
+                    print("mongo error")
 
 
 class Hold():
@@ -109,7 +117,7 @@ def code():
     db.edited.insert_one({'add':[], 'upd': {}, 'del': []})
     if not "agents" in db.collection_names():
         print('not found')
-        with open('config.json') as data:
+        with open('conf.json') as data:
             x = (json.load(data))['agents']
             for agent in x:
                 db.agents.insert_one(agent)
@@ -142,18 +150,20 @@ class daemon2(daemon):
                 break
 
 if __name__ == "__main__":
-    dae = daemon2('/tmp/daemon-example.pid')
-    if len(sys.argv) == 2:
-        if 'start' == sys.argv[1]:
-            dae.start()
-        elif 'stop' == sys.argv[1]:
-            dae.stop()
-        elif 'restart' == sys.argv[1]:
-            dae.restart()
-        else:
-            print("Unknown command")
-            sys.exit(2)
-        sys.exit(0)
-    else:
-        print("usage: %s start|stop|restart" % sys.argv[0])
-        sys.exit(2)
+    # dae = daemon2('/tmp/daemon-example.pid')
+    # if len(sys.argv) == 2:
+    #     if 'start' == sys.argv[1]:
+    #         dae.start()
+    #     elif 'stop' == sys.argv[1]:
+    #         dae.stop()
+    #     elif 'restart' == sys.argv[1]:
+    #         dae.restart()
+    #     else:
+    #         print("Unknown command")
+    #         sys.exit(2)
+    #     sys.exit(0)
+    # else:
+    #     print("usage: %s start|stop|restart" % sys.argv[0])
+    #     sys.exit(2)
+
+    code()
