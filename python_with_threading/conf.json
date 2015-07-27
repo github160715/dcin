@@ -1,0 +1,16 @@
+{
+  "agents": [
+    {
+      "name": "agent1",
+      "http": "http://localhost:3001",
+      "period": 3,
+      "status": true
+    },
+    {
+      "name": "agent2",
+      "http": "http://localhost:3002",
+      "period": 6,
+      "status": true
+    }
+  ]
+}
