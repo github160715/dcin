@@ -2,6 +2,7 @@ import requests
 import json
 import datetime
 import pymongo
+import os
 from pymongo import MongoClient
 from datetime import datetime
 
@@ -14,12 +15,13 @@ class Agent:
         self.err = err
         self.db = MongoClient().test
 
-        try:
-            with open(self.name + '.json', 'w') as f:
-                    json.dump([], f)
+        if not os.path.isfile(self.name + '.json'):
+            try:
+                with open(self.name + '.json', 'w') as f:
+                        json.dump([], f)
 
-        except OSError:
-            print("Can't create " + self.name + '.json')
+            except OSError:
+                print("Can't create " + self.name + '.json')
 
     def get_data(self):
         json_obj = {}
@@ -86,6 +88,8 @@ class Agent:
         except OSError: # parent of IOError, OSError *and* WindowsError where available
             print("Can't open " + self.name + '.json')
 
+        os.remove(self.name + ".json")
+
     def modify_agent(self, old_name, index):
         print(old_name)
         try:
@@ -113,7 +117,6 @@ class Agent:
 
                 with open('conf.json', 'w') as f:
                     json.dump(data_json, f)
-
 
             except OSError: # parent of IOError, OSError *and* WindowsError where available
                 print("Can't open " + self.name + '.json')
