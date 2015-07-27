@@ -7,7 +7,6 @@ import re
 from sys import argv
 from classes import Agent
 from time import sleep
-from urllib import request
 
 # "chmod +x server.py" - make executable
 # ./server.py - run executable
@@ -27,6 +26,7 @@ def check_url(url):
 
     if not re.match(regex, url) or url[-1] != '/':
         raise ValueError
+
 
 def create_agents(conf):
     list_of_agents = []

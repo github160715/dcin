@@ -2,6 +2,7 @@ import requests
 import json
 import datetime
 import pymongo
+import os
 from pymongo import MongoClient
 from datetime import datetime
 
@@ -86,6 +87,8 @@ class Agent:
         except OSError: # parent of IOError, OSError *and* WindowsError where available
             print("Can't open " + self.name + '.json')
 
+        os.remove(self.name + ".json")
+
     def modify_agent(self, old_name, index):
         print(old_name)
         try:
@@ -113,7 +116,6 @@ class Agent:
 
                 with open('conf.json', 'w') as f:
                     json.dump(data_json, f)
-
 
             except OSError: # parent of IOError, OSError *and* WindowsError where available
                 print("Can't open " + self.name + '.json')
