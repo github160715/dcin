@@ -15,12 +15,13 @@ class Agent:
         self.err = err
         self.db = MongoClient().test
 
-        try:
-            with open(self.name + '.json', 'w') as f:
-                    json.dump([], f)
+        if not os.path.isfile(self.name + '.json'):
+            try:
+                with open(self.name + '.json', 'w') as f:
+                        json.dump([], f)
 
-        except OSError:
-            print("Can't create " + self.name + '.json')
+            except OSError:
+                print("Can't create " + self.name + '.json')
 
     def get_data(self):
         json_obj = {}
