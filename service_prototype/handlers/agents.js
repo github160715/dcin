@@ -63,7 +63,7 @@ function errf(req, err){
 function get_last(db, callback) {
     var data = [], ttt = 0;
     db.collection('agents').find({}).each(function (err, docs){
-        if (docs == null) return;
+        if (docs == null) callback([]);
         assert.equal(null, err);
         ttt++;
         var r = db.collection('states').find({time : docs.last}).toArray(function (er, ds){
