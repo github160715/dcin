@@ -64,9 +64,9 @@ var del = function(obj, res){
             res.status(301).send('MongoClient connection error');
             return
         }
-        db.collection('del').findOneAndUpdate(
-            {'_id' : obj['_id']},
-            {$set: {'_id': obj['_id']}},
+        db.collection('delete').findOneAndUpdate(
+            {'_id' : ObjectID(obj['_id'])},
+            {$set: {'_id': ObjectID(obj['_id'])}},
             {upsert: true},
             function(er2){
                 if (er2) {res.status(302).send("Something went wrong"); return }
