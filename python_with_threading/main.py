@@ -20,8 +20,8 @@ class Thr(Thread):
     def run(self):
         while not self.stopped.wait(self.doc['period']):
             try:
-                cpu = (requests.get(self.doc['http'] + '/vals/cpu')).json()
-                mem = (requests.get(self.doc['http'] + '/vals/memory')).json()
+                cpu = (requests.get(self.doc['http'] + 'vals/cpu')).json()
+                mem = (requests.get(self.doc['http'] + 'vals/memory')).json()
 
                 t = datetime.strptime(cpu['time'], "%Y-%m-%dT%H:%M:%S.%fZ")
                 res = {
@@ -72,7 +72,7 @@ class Hold():
         self.docs.append(doc)
         db.agents.insert_one(doc)
         e = Event()
-        self.events[doc['id']] = e
+        self.events[doc['_id']] = e
         th = Thr(e, doc)
         th.start()
 
@@ -124,7 +124,7 @@ def code(period):
                 db.agents.insert_one(agent)
 
     x = db.agents.find()
-    h = Hold(x)
+    h = Hold(list(x))
 
     try:
         h.start()
@@ -136,8 +136,11 @@ def code(period):
 
         adding = db.add.find()
 
+        print("Adding")
+
         for agent in adding:
             h.start_one(agent)
+            db.add.delete_one({"_id": agent["_id"]})
 
 
         # for idx, agent in edited['upd'].items():
@@ -188,4 +191,4 @@ if __name__ == "__main__":
         print("usage: %s start|stop|restart" % sys.argv[0])
         sys.exit(2)
 
- #   code(period)
+    # code(period)
