@@ -68,9 +68,10 @@ class Hold():
             th.start()
 
 # запускает тред для нового агента
-    def start_one(self, doc):
+    def start_one(self, doc, upd):
         self.docs.append(doc)
-        db.agents.insert_one(doc)
+        if not upd:
+            db.agents.insert_one(doc)
         e = Event()
         self.events[doc['_id']] = e
         th = Thr(e, doc)
@@ -102,7 +103,10 @@ class Hold():
 
     def update(self, x, doc):
         self.stop_one(x)
-        self.start_one(doc)
+        self.start_one(doc, True)
+
+        name = db.agents.find({'_id': x}).next()["name"]
+
         db.agents.update_one(
             {'_id': x},
             {'$set': {
@@ -111,6 +115,15 @@ class Hold():
                 'period': doc['period']
             }}
         )
+
+        if name != doc['name']:
+            db.states.update_many(
+                {"agent": name},
+                {"$set": {
+                    "agent": doc['name']
+                }
+                }
+            )
 
 
 def code(period):
@@ -137,26 +150,20 @@ def code(period):
         adding = db.add.find()
 
         for agent in adding:
-            h.start_one(agent)
+            h.start_one(agent, False)
             db.add.delete_one({"_id": agent["_id"]})
 
         deletion = db.delete.find()
 
-        for idx in deletion:
-            h.rm_one(idx["_id"])
-            db.delete.delete_one({"_id": idx["_id"]})
+        for item in deletion:
+            h.rm_one(item["_id"])
+            db.delete.delete_one({"_id": item["_id"]})
 
-        # update = db.update.find()
-        #
-        # for agent in edited['upd'].items():
-        #     h.update(idx, agent)
+        update = db.update.find()
 
-        # for idx, agent in edited['upd'].items():
-        #     h.update(idx, agent)
-        #
-        # for idx in edited['del']:
-        #     #добавить удаление всех, если совпадает число айди и агентов
-        #     h.rm_one(idx)
+        for item in update:
+            h.update(item["_id"], item)
+            db.update.delete_one({"_id": item["_id"]})
 
         sleep(period)
 

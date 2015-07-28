@@ -24,8 +24,8 @@
       <file leaf-file-name="main.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.1646489">
-              <caret line="185" column="4" selection-start-line="185" selection-start-column="4" selection-end-line="200" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.38256657">
+              <caret line="165" column="54" selection-start-line="165" selection-start-column="54" selection-end-line="165" selection-end-column="54" />
               <folding>
                 <element signature="e#24#33#0" expanded="true" />
               </folding>
@@ -130,7 +130,7 @@
   <component name="PropertiesComponent">
     <property name="recentsLimit" value="5" />
     <property name="FullScreen" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../gui" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../server" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
   </component>
@@ -543,8 +543,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.1646489">
-          <caret line="185" column="4" selection-start-line="185" selection-start-column="4" selection-end-line="200" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.38256657">
+          <caret line="165" column="54" selection-start-line="165" selection-start-column="54" selection-end-line="165" selection-end-column="54" />
           <folding>
             <element signature="e#24#33#0" expanded="true" />
           </folding>
