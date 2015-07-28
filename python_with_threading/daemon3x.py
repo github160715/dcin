@@ -24,7 +24,8 @@ class daemon:
             sys.exit(1)
 
         # decouple from parent environment
-        os.chdir('/')
+# TODO сменить домашнюю директорию на текующую
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
         os.setsid()
         os.umask(0)
 
@@ -42,8 +43,8 @@ class daemon:
         sys.stdout.flush()
         sys.stderr.flush()
         si = open(os.devnull, 'r')
-        so = open(os.devnull, 'a+')
-        se = open(os.devnull, 'a+')
+        so = sys.stdout        # open(os.devnull, 'a+')
+        se = sys.stdout                  #open(os.devnull, 'a+')
 
         os.dup2(si.fileno(), sys.stdin.fileno())
         os.dup2(so.fileno(), sys.stdout.fileno())

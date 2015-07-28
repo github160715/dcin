@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import json, requests, sys, pymongo
 from threading import Thread, Event
 from pymongo import MongoClient
@@ -45,7 +46,7 @@ class Thr(Thread):
 
                 try:
                     db.agents.update_one(
-                        {"_id" : self.doc["_id"]},
+                        {"_id": self.doc["_id"]},
                         {"$set": {"status": False}}
                     )
 
@@ -58,7 +59,7 @@ class Hold():
         self.docs = docs
         self.events = {}
 
-#запускает треды для всех агентов
+# запускает треды для всех агентов
     def start(self):
         for doc in self.docs:
             e = Event()
@@ -66,7 +67,7 @@ class Hold():
             th = Thr(e, doc)
             th.start()
 
-#запускает тред для нового агента
+# запускает тред для нового агента
     def start_one(self, doc):
         self.docs.append(doc)
         db.agents.insert_one(doc)
@@ -114,25 +115,36 @@ class Hold():
 
 def code():
     db.edited.drop()
-    db.edited.insert_one({'add':[], 'upd': {}, 'del': []})
-    if not "agents" in db.collection_names():
+    db.edited.insert_one({'add': [], 'upd': {}, 'del': []})
+
+    if "agents" not in db.collection_names():
         print('not found')
+
         with open('conf.json') as data:
-            x = (json.load(data))['agents']
-            for agent in x:
+            agents = (json.load(data))['agents']
+            for agent in agents:
                 db.agents.insert_one(agent)
+
     x = db.agents.find()
     h = Hold(x)
+
     try:
         h.start()
+
     except:
         h.stop()
+
     while True:
+
         edited = db.edited.find_one()
+
         for agent in edited['add']:
             h.start_one(agent)
+
+
         for idx, agent in edited['upd'].items():
             h.update(idx, agent)
+
         for idx in edited['del']:
             #добавить удаление всех, если совпадает число айди и агентов
             h.rm_one(idx)
@@ -150,20 +162,21 @@ class daemon2(daemon):
                 break
 
 if __name__ == "__main__":
-    # dae = daemon2('/tmp/daemon-example.pid')
-    # if len(sys.argv) == 2:
-    #     if 'start' == sys.argv[1]:
-    #         dae.start()
-    #     elif 'stop' == sys.argv[1]:
-    #         dae.stop()
-    #     elif 'restart' == sys.argv[1]:
-    #         dae.restart()
-    #     else:
-    #         print("Unknown command")
-    #         sys.exit(2)
-    #     sys.exit(0)
-    # else:
-    #     print("usage: %s start|stop|restart" % sys.argv[0])
-    #     sys.exit(2)
+    dae = daemon2('/tmp/daemon-example.pid')
+    if len(sys.argv) == 2:
+        if 'start' == sys.argv[1]:
+            dae.start()
+        elif 'stop' == sys.argv[1]:
+            dae.stop()
+        elif 'restart' == sys.argv[1]:
+            dae.restart()
+        else:
+            print("Unknown command")
+            sys.exit(2)
+        sys.exit(0)
+    else:
+        print("usage: %s start|stop|restart" % sys.argv[0])
+        sys.exit(2)
 
-    code()
+
+ #   code()
