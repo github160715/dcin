@@ -18,48 +18,6 @@ function all(req, res) {
     );
 }
 
-function agents(req, res) {
-    MongoClient.connect(mongoUrl, function (er1, db) {
-            if (er1) {
-                res.status(400).json("Mongo connection error");
-                return
-            }
-            db.collection('agents').find({}).toArray(function (er2, docs) {
-                if (er2) {
-                    res.status(400).send("Mongo search error");
-                    return
-                }
-                var data = [];
-                for (var i = 0; i < docs.length; i++) {
-                    data.push({'_id': docs[i]._id, 'name': docs[i].name});
-                }
-                res.status(200).json(data);
-            });
-        }
-    );
-}
-
-function status(req, res){
-    MongoClient.connect(mongoUrl, function (er1, db) {
-            if (er1) {
-                res.status(400).send("Mongo connection error");
-                return;
-            }
-            db.collection('agents').find({}).toArray(function (er2, docs) {
-                if (er2) {
-                    res.status(400).send("Mongo search error");
-                    return
-                }
-                var data = [];
-                for (var i = 0; i < docs.length; i++) {
-                    data.push({'_id': docs[i]._id, 'name': docs[i].name, 'status': docs[i].status});
-                }
-                res.status(200).json(data);
-            });
-        }
-    );
-}
-
 function info_last(req, res){
     MongoClient.connect(mongoUrl, function (er1, db){
         if (er1) {
@@ -99,8 +57,7 @@ function info(req, res){
         );
     });
 }
-module.exports.agents = agents;
-module.exports.status = status;
+
 module.exports.last_info = info_last;
 module.exports.info = info;
 module.exports.all = all;
