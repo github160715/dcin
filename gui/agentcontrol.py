@@ -180,7 +180,7 @@ class AgentsControl(CommonFrame):
 
         if not self.validate(name, url, period, self.current_row):
             showinfo("info", "Агент добавлен")
-            self.conf.add_agent(name, url, float(period))
+            self.web.add_agent(name, url, float(period))
 
             self.rawArray[self.current_row - 2].get_array()[0].change_state(name)
             self.rawArray[self.current_row - 2].get_array()[1].change_state(url)
@@ -197,18 +197,7 @@ class AgentsControl(CommonFrame):
     def delete(self):
         # TODO сделать более быстрое удаление
 
-        self.conf.delete_agent(self.checked_row)
-        showinfo("info", "Удаляем")
-
-        was_modified = self.update_time("/home/mikhail/programming/practice/dcin-practice/dcin/server/conf.json")
-
-        x = self.update_time("/home/mikhail/programming/practice/dcin-practice/dcin/server/conf.json")
-        while was_modified == x:
-            x = self.update_time("/home/mikhail/programming/practice/dcin-practice/dcin/server/conf.json")
-        self.canvas.delete(ALL)
-        self.canvas.destroy()
-        self.__init__(self.parent)
-        self.pack(expand=YES, fill=BOTH)
+        self.web.delete_agent(self.agent.ids[self.agent.agents[self.checked_row]])
         showinfo("info", "Агент удален")
 
     def modify(self):

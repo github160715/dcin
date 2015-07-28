@@ -1,25 +1,30 @@
 import requests
+import json
 import dateutil.parser as parser
 from datetime import datetime
 
 
 class Agent:
 
-    def __init__(self, agents, urls, periods, info):
+    def __init__(self, agents, urls, periods, info, ids):
         self.agents = agents
         self.urls = urls
         self.info = info
         self.periods = periods
+        self.ids = ids
 
 
 class Web:
 # TODO адрес веб-службы задается в conf файле
     def __init__(self):
-        
-        self.agents_url = "http://localhost:3000/handlers/agents/"
-        self.status_url = "http://localhost:3000/handlers/status/"
-        self.last_url = "http://localhost:3000/handlers/last_info/"
-        self.info_url = "http://localhost:3000/handlers/info/"
+
+        self.url = "http://localhost:3000/"
+        self.agents_url = self.url + "handlers/agents/"
+        self.status_url = self.url + "handlers/status/"
+        self.last_url = self.url + "handlers/last_info/"
+        self.info_url = self.url + "handlers/info/"
+        self.add_url = self.url + "add"
+        self.del_url = self.url + "del"
 
     def get_agents(self):
 
@@ -53,6 +58,7 @@ class Web:
         agents = []
         urls = []
         periods = []
+        ids = {}
 
         all_info = self.get_agents()
 
@@ -61,10 +67,30 @@ class Web:
             agents.append(agent["name"])
             urls.append(agent["http"])
             periods.append(agent["period"])
+            ids[agent["name"]] = agent["_id"]
 
-        return Agent(agents, urls, periods, data)
+        return Agent(agents, urls, periods, data, ids)
 
+    def add_agent(self, name, url, period):
+        data = {
+            "name": name,
+            "http": url,
+            "period": period,
+            "status": False,
+            "last": ""
+        }
 
+        headers = {'content-type': 'application/json'}
+        response = requests.post(self.add_url, data=json.dumps(data), headers=headers)
+
+    def delete_agent(self, id):
+
+        data = {
+            "_id": id
+        }
+
+        headers = {'content-type': 'application/json'}
+        response = requests.post(self.del_url, data=json.dumps(data), headers=headers)
 
 if __name__ == '__main__':
     pass
