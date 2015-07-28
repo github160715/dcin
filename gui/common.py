@@ -19,7 +19,7 @@ class CommonFrame(Frame):
 
         self.vsb.pack(side="right", fill="y")
         self.canvas.pack(fill=BOTH, expand=YES)
-        self.canvas.create_window((0, 0), window=self.frame, width=400, anchor="nw")
+        self.canvas.create_window((0, 0), window=self.frame, width=400, anchor="nw", tag="window")
 
 
 class MyCanvas(Canvas):

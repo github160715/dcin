@@ -1,102 +1,106 @@
-var assert = require('assert');
 var MongoClient = require('mongodb').MongoClient;
 var mongoUrl =  'mongodb://localhost:27017/test';
-var Acollection = "agents", Icollection = "states";
 
-var find_agents = function(db, callback) {
-    var cursor =db.collection(Acollection).find( ).toArray(function (err, docs) {
-        var data = [];
-        assert.equal(null, err);
-        for (var i = 0; i < docs.length; i++) {
-            data.push(docs[i].name);
-    //        console.log(docs[i].name);
-        }
-        callback(data);
-    });
-};
-
-
-function agents(req, res) {
-    MongoClient.connect(mongoUrl, function (err, db) {
-            if (err != null) {
-                res.status(200).json("error");
+function all(req, res) {
+    MongoClient.connect(mongoUrl, function (er1, db) {
+            if (er1) {
+                res.status(400).json("Mongo connection error");
+                return
             }
-            find_agents(db, function(data) {
-                db.close();
-                res.status(200).json(data);
+            db.collection('agents').find({}).toArray(function (er2, docs) {
+                if (er2) {
+                    res.status(400).send("Mongo search error");
+                    return
+                }
+                res.status(200).json(docs);
             });
         }
     );
 }
 
-function find_status(db, callback) {
-    var cursor =db.collection(Acollection).find().toArray(function (err, docs) {
-        var data = {};
-        assert.equal(null, err);
-        for (var i = 0; i < docs.length; i++) {
-            data[docs[i].name] = docs[i].status;
+function agents(req, res) {
+    MongoClient.connect(mongoUrl, function (er1, db) {
+            if (er1) {
+                res.status(400).json("Mongo connection error");
+                return
+            }
+            db.collection('agents').find({}).toArray(function (er2, docs) {
+                if (er2) {
+                    res.status(400).send("Mongo search error");
+                    return
+                }
+                var data = [];
+                for (var i = 0; i < docs.length; i++) {
+                    data.push({'_id': docs[i]._id, 'name': docs[i].name});
+                }
+                res.status(200).json(data);
+            });
         }
-        callback(data);
-    });
+    );
 }
 
 function status(req, res){
-    MongoClient.connect(mongoUrl, function (err, db) {
-            if (err != null) {
-                res.status(200).json("error");
+    MongoClient.connect(mongoUrl, function (er1, db) {
+            if (er1) {
+                res.status(400).send("Mongo connection error");
+                return;
             }
-            find_status(db, function(data) {
-                db.close();
+            db.collection('agents').find({}).toArray(function (er2, docs) {
+                if (er2) {
+                    res.status(400).send("Mongo search error");
+                    return
+                }
+                var data = [];
+                for (var i = 0; i < docs.length; i++) {
+                    data.push({'_id': docs[i]._id, 'name': docs[i].name, 'status': docs[i].status});
+                }
                 res.status(200).json(data);
             });
         }
     );
 }
 
-function errf(req, err){
-    if (err != null) {
-        req.status(500).json({"error" : err.message});
-        return;
-    }
+function info_last(req, res){
+    MongoClient.connect(mongoUrl, function (er1, db){
+        if (er1) {
+            res.status(400).send("Mongo connection error");
+            return;
+        }
+        db.collection('agents').find({}).toArray(function (er2, docs) {
+            if (er2) {
+                res.status(400).send("Mongo search 'agents' error");
+                return;
+            }
+            var data = [];
+            for (var i in docs){
+                db.collection('states').find({time: docs[i].last}).toArray(function (er3, stat) {
+                    if (er3 && !res._headerSent) {
+                        res.status(400).send("Mongo search 'states' error");
+                    }else {data.push(stat[0]);}
+                    if (data.length == docs.length) {res.status(200).send(data);}
+                });
+            }
+        });
+    });
 }
 
-function get_last(db, callback) {
-    var data = [], ttt = 0;
-    db.collection('agents').find({}).each(function (err, docs){
-        if (docs == null) callback([]);
-        assert.equal(null, err);
-        ttt++;
-        var r = db.collection('states').find({time : docs.last}).toArray(function (er, ds){
-            data.push(ds[0]);
-            if (!(--ttt)) callback(data);
-        });
-    });
-}
-//теперь возвращает массив последних states (словарь был избыточным)
-function last_info(req, res){
-    MongoClient.connect(mongoUrl, function (err, db){
-        errf(res, err);
-        get_last(db, function(data) {
-            db.close();
-            res.status(200).json(data);
-        });
-    });
+function errf(req, err){
+    if (err != null) req.status(500).json({"error" : err.message});
 }
 function info(req, res){
     var a = req.params.inf, b = req.params.sup;
     MongoClient.connect(mongoUrl, function (err, db){
         errf(req, err);
-        db.collection(Icollection).find({time : {$gt: new Date(a), $lt: new Date(b)}}).toArray(
+        db.collection('states').find({time : {$gt: new Date(a), $lt: new Date(b)}}).toArray(
             function (er, docs) {
                 errf(res, er);
-                db.close();
-                res.status(200).json(docs);
+                res.status(200).json({info : docs});
             }
         );
     });
 }
-
 module.exports.agents = agents;
 module.exports.status = status;
-module.exports.last_info = last_info;
+module.exports.last_info = info_last;
 module.exports.info = info;
+module.exports.all = all;
