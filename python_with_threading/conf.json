@@ -12,5 +12,6 @@
       "period": 20,
       "status": false
     }
-  ]
+  ],
+  "period" : 10
 }

@@ -113,9 +113,7 @@ class Hold():
         )
 
 
-def code():
-    db.edited.drop()
-    db.edited.insert_one({'add': [], 'upd': {}, 'del': []})
+def code(period):
 
     if "agents" not in db.collection_names():
         print('not found')
@@ -136,33 +134,45 @@ def code():
 
     while True:
 
-        edited = db.edited.find_one()
+        adding = db.add.find()
 
-        for agent in edited['add']:
+        for agent in adding:
             h.start_one(agent)
 
 
-        for idx, agent in edited['upd'].items():
-            h.update(idx, agent)
+        # for idx, agent in edited['upd'].items():
+        #     h.update(idx, agent)
+        #
+        # for idx in edited['del']:
+        #     #добавить удаление всех, если совпадает число айди и агентов
+        #     h.rm_one(idx)
 
-        for idx in edited['del']:
-            #добавить удаление всех, если совпадает число айди и агентов
-            h.rm_one(idx)
-        sleep(10)
+        sleep(period)
 
 
 class daemon2(daemon):
+
+    def __init__(self, pid, period):
+        daemon.__init__(self,pid)
+        self.period = period
+
     def run(self):
         while True:
             try:
-               code()
+               code(period)
             except:
                 pass
             else:
                 break
 
 if __name__ == "__main__":
-    dae = daemon2('/tmp/daemon-example.pid')
+    try:
+        with open('conf.json') as data:
+            period = (json.load(data))["period"]
+    except:
+        period = 10
+
+    dae = daemon2('/tmp/daemon-example.pid', period)
     if len(sys.argv) == 2:
         if 'start' == sys.argv[1]:
             dae.start()
@@ -178,5 +188,4 @@ if __name__ == "__main__":
         print("usage: %s start|stop|restart" % sys.argv[0])
         sys.exit(2)
 
-
- #   code()
+ #   code(period)
