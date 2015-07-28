@@ -190,20 +190,20 @@ if __name__ == "__main__":
     except:
         period = 10
 
-    dae = daemon2('/tmp/daemon-example.pid', period)
-    if len(sys.argv) == 2:
-        if 'start' == sys.argv[1]:
-            dae.start()
-        elif 'stop' == sys.argv[1]:
-            dae.stop()
-        elif 'restart' == sys.argv[1]:
-            dae.restart()
-        else:
-            print("Unknown command")
-            sys.exit(2)
-        sys.exit(0)
-    else:
-        print("usage: %s start|stop|restart" % sys.argv[0])
-        sys.exit(2)
+    # dae = daemon2('/tmp/daemon-example.pid', period)
+    # if len(sys.argv) == 2:
+    #     if 'start' == sys.argv[1]:
+    #         dae.start()
+    #     elif 'stop' == sys.argv[1]:
+    #         dae.stop()
+    #     elif 'restart' == sys.argv[1]:
+    #         dae.restart()
+    #     else:
+    #         print("Unknown command")
+    #         sys.exit(2)
+    #     sys.exit(0)
+    # else:
+    #     print("usage: %s start|stop|restart" % sys.argv[0])
+    #     sys.exit(2)
 
-    # code(period)
+    code(period)

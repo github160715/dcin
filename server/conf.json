@@ -1,1 +1,1 @@
-{"period": 10, "agents": [["agent1", "http://localhost:3001/", 10]], "error_file": "err.txt"}
+{"agents": [], "error_file": "err.txt", "period": 10}

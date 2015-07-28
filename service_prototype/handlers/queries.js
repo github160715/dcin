@@ -10,6 +10,7 @@ var check = function(db, col_names, field_names, res) {
                 }
             });
     }
+    return true
 };
 var add = function (doc, res) {
     //status false
@@ -34,15 +35,15 @@ var add = function (doc, res) {
 };
 
 var upd = function (params, res) {
-  console.log('updating doc with id: ', params['id']);
+  console.log('updating doc with id: ', params['_id']);
     MongoClient.connect(mongoUrl, function (er1, db) {
         if (er1) {
             res.status(301).send('MongoClient connection error');
             return
         }
-        check(db, ['agents', 'add'], [{"name": params['name']}, {"http": params['http']}], res);
-        db.collection('upd').findOneAndUpdate(
-            {"id": params['id']},
+        check(db, ['agents', 'add'], [{"http": params['http']}], res);
+        db.collection('update').findOneAndUpdate(
+            {"_id": params['_id']},
             {$set: {
                 "name": params['name'],
                 "http": params['http'],
