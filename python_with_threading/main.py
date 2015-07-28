@@ -136,12 +136,20 @@ def code(period):
 
         adding = db.add.find()
 
-        print("Adding")
-
         for agent in adding:
             h.start_one(agent)
             db.add.delete_one({"_id": agent["_id"]})
 
+        deletion = db.delete.find()
+
+        for idx in deletion:
+            h.rm_one(idx["_id"])
+            db.delete.delete_one({"_id": idx["_id"]})
+
+        # update = db.update.find()
+        #
+        # for agent in edited['upd'].items():
+        #     h.update(idx, agent)
 
         # for idx, agent in edited['upd'].items():
         #     h.update(idx, agent)
