@@ -23,8 +23,7 @@ class CurrentState(CommonFrame):
         self.web = Web()
 
         try:
-            self.agents = self.web.get_agents()
-            self.statuses = self.web.get_status()
+            self.agents, self.statuses = self.web.get_agents_and_statuses()
             self.last_info = self.web.get_last()
 
         except requests.RequestException:

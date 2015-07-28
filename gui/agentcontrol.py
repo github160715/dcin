@@ -209,8 +209,8 @@ class AgentsControl(CommonFrame):
             url += "/"
 
         if not self.validate(name, url, period, self.checked_row):
+            self.web.modify_agent(self.agent.ids[self.agent.agents[self.checked_row]], name, url, float(period))
             showinfo("info", "Агент модифицирован")
-            self.conf.change_agent(self.checked_row, name, url, float(period))
 
             self.rawArray[self.checked_row].get_array()[0].change_state(name)
             self.rawArray[self.checked_row].get_array()[1].change_state(url)
