@@ -1,8 +1,8 @@
 import os
-from config import Config
 from tkinter import *
 from tkinter.messagebox import *
 from common import MyLabel, CommonFrame, ThemedButton
+from web import Web
 
 
 class AgentsControl(CommonFrame):
@@ -73,9 +73,9 @@ class AgentsControl(CommonFrame):
 
         self.rawArray = []
 
-        self.conf = Config()
-        self.agent = self.conf.get_agents_info()
+        self.web = Web()
 
+        self.agent = self.web.create_agent()
         self.amountOfAgents = len(self.agent.agents) + 1
 
         self.current_row = 0
@@ -92,6 +92,8 @@ class AgentsControl(CommonFrame):
             ThemedButton(self.topFrame, text=buttonName, command=handler).pack(side=LEFT)
             MyLabel(self.bottomFrame, text=labelName).grid(row=0, column=i, sticky=EW)
             self.bottomFrame.columnconfigure(i, weight=1)
+
+        ThemedButton(self.topFrame, text="R", command=self.refresh).pack(side=LEFT)
 
         self.current_row += 1
 
@@ -228,6 +230,12 @@ class AgentsControl(CommonFrame):
             self.agent.agents[self.checked_row] = name
             self.agent.urls[self.checked_row] = url
             self.agent.periods[self.checked_row] = float(period)
+
+    def refresh(self):
+        self.canvas.delete(ALL)
+        self.canvas.destroy()
+        self.__init__(self.parent)
+        self.pack(expand=YES, fill=BOTH)
 
     def validation(self, name, array, index):
         for (item, i) in zip(array, range(len(array))):

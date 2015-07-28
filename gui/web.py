@@ -3,6 +3,15 @@ import dateutil.parser as parser
 from datetime import datetime
 
 
+class Agent:
+
+    def __init__(self, agents, urls, periods, info):
+        self.agents = agents
+        self.urls = urls
+        self.info = info
+        self.periods = periods
+
+
 class Web:
 # TODO адрес веб-службы задается в conf файле
     def __init__(self):
@@ -39,7 +48,26 @@ class Web:
         except ValueError:
             return False
 
-if __name__ == '__main__':
+    def create_agent(self):
+        data = []
+        agents = []
+        urls = []
+        periods = []
 
+        all_info = self.get_agents()
+
+        for agent in all_info:
+            data.append([agent["name"], agent["http"], agent["period"]])
+            agents.append(agent["name"])
+            urls.append(agent["http"])
+            periods.append(agent["period"])
+
+        return Agent(agents, urls, periods, data)
+
+
+
+if __name__ == '__main__':
+    pass
 #    print(Web().get_info(datetime(2015, 7, 22, 10, 22, 57, 48000), datetime(2015, 7, 30, 10, 22, 57, 48000)))
-     print(Web().get_info("2015-07-21T07:25:10.658Z", "2015-07-30T08:05:59.658Z"))
+  #   print(Web().get_info("2015-07-21T07:25:10.658Z", "2015-07-30T08:05:59.658Z"))
+
