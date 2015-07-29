@@ -24,12 +24,12 @@ class Gui(ttk.Notebook):
         state = Frame(self)
         CurrentState(state).pack(expand=YES, fill=BOTH)
 
-        # history = Frame(self)
-        # History(history, "2015-07-27T07:27:10.658Z", "2015-07-27T07:28:10.658Z", True).pack(expand=YES, fill=BOTH)
+        history = Frame(self)
+        History(history, "2015-07-27T07:27:10.658Z", "2015-07-27T07:28:10.658Z", True).pack(expand=YES, fill=BOTH)
 
         self.add(agents, text='Управление агентами')
         self.add(state, text='Текущее состояние')
-        self.add(Frame(self), text='История')
+        self.add(history, text='История')
 
         self.pack(expand=YES, fill=BOTH)
 
