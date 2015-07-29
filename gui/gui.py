@@ -6,6 +6,7 @@ from agentcontrol import AgentsControl
 from currentstate import CurrentState
 from history import History
 import json
+import os
 
 
 def get_conf():
@@ -34,6 +35,11 @@ class Gui(ttk.Notebook):
         self.pack(expand=YES, fill=BOTH)
 
 if __name__ == '__main__':
+
+    abspath = os.path.abspath(__file__)
+    dname = os.path.dirname(abspath)
+    os.chdir(dname)
+
     root = Tk()
     root.title("Monitoring")
 

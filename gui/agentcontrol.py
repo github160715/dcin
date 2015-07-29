@@ -127,6 +127,13 @@ class AgentsControl(CommonFrame):
 
         self.add_empty_raw()
 
+    def load_data(self):
+        try:
+            self.agent = self.web.create_agent()
+
+        except requests.RequestException:
+            self.agent = Agent([], [], [], [], {})
+
     def add_empty_raw(self):
         # Пустая строка для добавления агента
 
@@ -200,13 +207,15 @@ class AgentsControl(CommonFrame):
             self.rawArray[self.current_row - 2].disable()
             self.add_empty_raw()
 
+
     def delete(self):
-        # TODO сделать более быстрое удаление
 
         self.web.delete_agent(self.agent.ids[self.agent.agents[self.checked_row]])
         showinfo("info", "Агент удален")
 
     def modify(self):
+
+        self.load_data()
         name = self.rawArray[self.checked_row].get_array()[0].get()
         url = self.rawArray[self.checked_row].get_array()[1].get()
         period = self.rawArray[self.checked_row].get_array()[2].get()
@@ -214,18 +223,22 @@ class AgentsControl(CommonFrame):
         if url[-1] != "/":
             url += "/"
 
+        if not (name and url and period):
+            showerror("error!", "Нельзя модифицировать несуществующего агента")
+            return
+
         try:
             if not self.validate(name, url, period, self.checked_row):
                 self.web.modify_agent(self.agent.ids[self.agent.agents[self.checked_row]], name, url, float(period))
                 showinfo("info", "Агент модифицирован")
 
-            self.rawArray[self.checked_row].get_array()[0].change_state(name)
-            self.rawArray[self.checked_row].get_array()[1].change_state(url)
-            self.rawArray[self.checked_row].get_array()[2].change_state(period)
+                self.rawArray[self.checked_row].get_array()[0].change_state(name)
+                self.rawArray[self.checked_row].get_array()[1].change_state(url)
+                self.rawArray[self.checked_row].get_array()[2].change_state(period)
 
-            self.agent.agents[self.checked_row] = name
-            self.agent.urls[self.checked_row] = url
-            self.agent.periods[self.checked_row] = float(period)
+                self.agent.agents[self.checked_row] = name
+                self.agent.urls[self.checked_row] = url
+                self.agent.periods[self.checked_row] = float(period)
 
         except (KeyError, IndexError):
             showerror("error!", "Нельзя модифицировать несуществующего агента")
