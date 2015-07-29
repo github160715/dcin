@@ -23,8 +23,7 @@ class CurrentState(CommonFrame):
         self.web = Web()
 
         try:
-            self.agents, self.statuses = self.web.get_agents_and_statuses()
-            self.last_info = self.web.get_last()
+            self.agents, self.statuses, self.last_info = self.web.get_current()
 
         except requests.RequestException:
             showerror("error!", "Не могу соединиться с веб службой")
@@ -49,7 +48,7 @@ class CurrentState(CommonFrame):
         self.current_row += 1
 
         for i in range(0, self.amountOfAgents):
-            for (j, item) in zip(range(0, 4), (self.agents[i], self.statuses[self.agents[i]], self.last_info[i]["cpu"], self.last_info[i]["used"])):
+            for (j, item) in zip(range(0, 4), (self.agents[i], self.statuses[self.agents[i]], self.last_info[self.agents[i]]["cpu"], self.last_info[self.agents[i]]["used"])):
                 if j == 1 and item == "on":
                     bg = "green"
                 elif j == 1:

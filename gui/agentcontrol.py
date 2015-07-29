@@ -214,9 +214,10 @@ class AgentsControl(CommonFrame):
         if url[-1] != "/":
             url += "/"
 
-        if not self.validate(name, url, period, self.checked_row):
-            self.web.modify_agent(self.agent.ids[self.agent.agents[self.checked_row]], name, url, float(period))
-            showinfo("info", "Агент модифицирован")
+        try:
+            if not self.validate(name, url, period, self.checked_row):
+                self.web.modify_agent(self.agent.ids[self.agent.agents[self.checked_row]], name, url, float(period))
+                showinfo("info", "Агент модифицирован")
 
             self.rawArray[self.checked_row].get_array()[0].change_state(name)
             self.rawArray[self.checked_row].get_array()[1].change_state(url)
@@ -225,6 +226,9 @@ class AgentsControl(CommonFrame):
             self.agent.agents[self.checked_row] = name
             self.agent.urls[self.checked_row] = url
             self.agent.periods[self.checked_row] = float(period)
+
+        except (KeyError, IndexError):
+            showerror("error!", "Нельзя модифицировать несуществующего агента")
 
     def refresh(self):
         self.canvas.delete(ALL)

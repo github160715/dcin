@@ -46,6 +46,24 @@ class Web:
 
         return agents, statuses
 
+    def get_current(self):
+        agents = []
+        statuses = {}
+        info = {}
+
+        for agent in self.get_all():
+            agents.append(agent["name"])
+            if agent["status"]:
+                statuses[agent["name"]] = "on"
+            else:
+                statuses[agent["name"]] = "off"
+
+            for state in self.get_last():
+                if state["agent"] == agent["name"]:
+                    info[agent["name"]] = state
+
+        return agents, statuses, info
+
     def get_status(self):
 
         r = requests.get(self.status_url)
