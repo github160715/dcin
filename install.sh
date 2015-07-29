@@ -33,7 +33,7 @@ cd service_prototype/
 npm install --save mongodb
 
 # Установка модулей для программ на питоне
+sudo apt-get install python3-pip -y
 sudo apt-get install python3-tk
 sudo pip3 install python-dateutil
-sudo apt-get install python3-pip -y
 sudo pip3 install pymongo
