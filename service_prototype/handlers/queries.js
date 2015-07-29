@@ -43,10 +43,6 @@ var upd = function (params, res) {
             return
         }
 
-        check(db, ['agents', 'add'], [{"name": params['name']}, {"http": params['http']}], res);
-        db.collection('upd').findOneAndUpdate(
-            {"id": params['id']},
-
         //check(db, ['agents', 'add'], [{"name": params['name']}, {"http": params['http']}], res);
         db.collection('update').findOneAndUpdate(
             {"_id": ObjectID(params['_id'])},

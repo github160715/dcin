@@ -1,8 +1,9 @@
 import os
+import requests
 from tkinter import *
 from tkinter.messagebox import *
 from common import MyLabel, CommonFrame, ThemedButton
-from web import Web
+from web import Web, Agent
 
 
 class AgentsControl(CommonFrame):
@@ -75,7 +76,12 @@ class AgentsControl(CommonFrame):
 
         self.web = Web()
 
-        self.agent = self.web.create_agent()
+        try:
+            self.agent = self.web.create_agent()
+
+        except requests.RequestException:
+            self.agent = Agent([], [], [], [], {})
+
         self.amountOfAgents = len(self.agent.agents) + 1
 
         self.current_row = 0
