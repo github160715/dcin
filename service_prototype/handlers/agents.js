@@ -34,7 +34,19 @@ function info_last(req, res){
                 db.collection('states').find({time: docs[i].last}).toArray(function (er3, stat) {
                     if (er3 && !res._headerSent) {
                         res.status(400).send("Mongo search 'states' error");
-                    } else {data.push(stat[0]);}
+                    } else {
+                        if (stat[0] == null) {
+                            console.log("NULL");
+                            stat[0] = {
+                                '_id': docs[i]._id,
+                                'time': "",
+                                'cpu': "",
+                                'total': "",
+                                'used': "",
+                                'agent': docs[i].name}
+                        }
+                        data.push(stat[0]);
+                    }
                     if (data.length == docs.length) {res.status(200).send(data);}
                 });
             }
