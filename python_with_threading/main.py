@@ -23,7 +23,11 @@ class Thr(Thread):
                 cpu = (requests.get(self.doc['http'] + 'vals/cpu')).json()
                 mem = (requests.get(self.doc['http'] + 'vals/memory')).json()
 
-                t = datetime.strptime(cpu['time'], "%Y-%m-%dT%H:%M:%S.%fZ")
+                try:
+                    t = datetime.strptime(cpu['time'], "%Y-%m-%dT%H:%M:%S.%fZ")
+
+                except ValueError:
+                    t = ""
                 res = {
                     "agent": self.doc['name'],
                     "time": t,
@@ -170,6 +174,10 @@ def code(period):
 
 class daemon2(daemon):
 
+    abspath = os.path.abspath(__file__)
+    dname = os.path.dirname(abspath)
+    os.chdir(dname)
+
     def __init__(self, pid, period):
         daemon.__init__(self,pid)
         self.period = period
@@ -190,20 +198,20 @@ if __name__ == "__main__":
     except:
         period = 10
 
-    # dae = daemon2('/tmp/daemon-example.pid', period)
-    # if len(sys.argv) == 2:
-    #     if 'start' == sys.argv[1]:
-    #         dae.start()
-    #     elif 'stop' == sys.argv[1]:
-    #         dae.stop()
-    #     elif 'restart' == sys.argv[1]:
-    #         dae.restart()
-    #     else:
-    #         print("Unknown command")
-    #         sys.exit(2)
-    #     sys.exit(0)
-    # else:
-    #     print("usage: %s start|stop|restart" % sys.argv[0])
-    #     sys.exit(2)
+    dae = daemon2('/tmp/daemon-example.pid', period)
+    if len(sys.argv) == 2:
+        if 'start' == sys.argv[1]:
+            dae.start()
+        elif 'stop' == sys.argv[1]:
+            dae.stop()
+        elif 'restart' == sys.argv[1]:
+            dae.restart()
+        else:
+            print("Unknown command")
+            sys.exit(2)
+        sys.exit(0)
+    else:
+        print("usage: %s start|stop|restart" % sys.argv[0])
+        sys.exit(2)
 
-    code(period)
+    # code(period)
