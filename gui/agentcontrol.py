@@ -8,8 +8,6 @@ from web import Web, Agent
 
 class AgentsControl(CommonFrame):
 
-    checked_row = 0
-
     class Raw(Radiobutton):
         def __init__(self, parent, index, **kw):
             Radiobutton.__init__(self, parent, **kw)
@@ -85,6 +83,8 @@ class AgentsControl(CommonFrame):
         self.amountOfAgents = len(self.agent.agents) + 1
 
         self.current_row = 0
+
+        self.checked_row = 0
 
     def pack(self, **kw):
 
@@ -207,11 +207,14 @@ class AgentsControl(CommonFrame):
             self.rawArray[self.current_row - 2].disable()
             self.add_empty_raw()
 
-
     def delete(self):
+        self.load_data()
+        try:
+            self.web.delete_agent(self.agent.ids[self.agent.agents[self.checked_row]])
+            showinfo("info", "Агент удален")
 
-        self.web.delete_agent(self.agent.ids[self.agent.agents[self.checked_row]])
-        showinfo("info", "Агент удален")
+        except KeyError:
+            showerror("error!", "Нельзя удалить несуществующего агента")
 
     def modify(self):
 
