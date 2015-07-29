@@ -32,6 +32,7 @@ sudo apt-get install -y nodejs npm node
 cd service_prototype/
 npm install --save mongodb
 
+cd ..
 # Установка модулей для программ на питоне
 sudo apt-get install python3-pip -y
 sudo apt-get install python3-tk
