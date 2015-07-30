@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en,rus">
+<head>
+    <meta charset="UTF-8">
+    <title>Main</title>
+    <script src="angular.min.js"></script>
+    <script src="angular-route.min.js"></script>
+    <script src="script.js"></script>
+    <style>
+        body {
+            background-color: #505050;
+            color: white;
+        }
+        div {
+
+        }
+        table, th , td  {
+            color: black;
+            border: 1px solid forestgreen;
+            border-collapse: collapse;
+            padding: 10px;
+        }
+        table tr:nth-child(odd)	{
+            background-color: #b6fa76;
+        }
+        table tr:nth-child(even) {
+            background-color: #e7fad4;
+        }
+        th {
+            background-color: #52a900
+        }
+    </style>
+</head>
+<body ng-app="single-page-app">
+<div ng-controller="cfgController">
+    <div>
+        <nav class="vertical">
+            <ul>
+                <li><a href="#/">Home</a></li>
+                <li><a href="#/control">Edit agents</a></li>
+                <li><a href="#/last_info">Last Info</a></li>
+                <li><a href="#/history">Info History</a></li>
+            </ul>
+        </nav>
+    </div>
+    <br/>
+    <div ng-view>
+        <!--
+           This DIV loads templates depending upon route.
+       -->
+    </div>
+</div>
+</body>
+</html>
