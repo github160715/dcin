@@ -22,35 +22,17 @@ app.controller('cfgController', function ($scope) {
 });
 app.controller('last_info', function ($scope, $http) {
     $scope.res = [];
-    $http.get("http://localhost:3000/handlers/all")
-        .then(function (result1) {
-            $scope.res1 = result1.data;
-            for (var x in result1.data) {
-                $scope.res.push({
-                    'name': result1.data[x]['name'],
-                    'status': result1.data[x]['status']
-                });
-            }
-            return $http.get("http://localhost:3000/handlers/last_info");
-        })
-        .then(function (result2) {
-            for (var x in result2.data) {
-                $scope.res[x]['time'] = result2.data[x]['time'];
-                $scope.res[x]['cpu'] = result2.data[x]['cpu'];
-                $scope.res[x]['total'] = result2.data[x]['total'];
-                $scope.res[x]['used'] = result2.data[x]['used'];
-            }
-            $scope.res2 = result2.data;
-        });
-    $scope.refresh = function () {
+    $scope.len = [];
+    function refresh($scope, $http) {
+
         $http.get("http://localhost:3000/handlers/all")
             .then(function (result1) {
-                $scope.res1 = result1.data;
                 for (var x in result1.data) {
-                    $scope.res.push({
+                    $scope.len.push(x);
+                    $scope.res[x] = {
                         'name': result1.data[x]['name'],
                         'status': result1.data[x]['status']
-                    });
+                    };
                 }
                 return $http.get("http://localhost:3000/handlers/last_info");
             })
@@ -61,9 +43,10 @@ app.controller('last_info', function ($scope, $http) {
                     $scope.res[x]['total'] = result2.data[x]['total'];
                     $scope.res[x]['used'] = result2.data[x]['used'];
                 }
-                $scope.res2 = result2.data;
             });
-    }
+    };
+    $scope.refresh();
+
 });
 app.controller('history', function ($scope, $http, $q) {
     $scope.show = false;
