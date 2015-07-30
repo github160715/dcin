@@ -39,8 +39,30 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(__dirname + '/script'));
 
-app.use('/', routes);
+
+//app.use('/', routes);
+app.get('/',function(req,res){
+    res.sendFile(path.join(__dirname+'/webapp/index.html'));
+    //__dirname : It will resolve to your project folder.
+});
+app.get('/about.html',function(req,res){
+    res.sendFile(path.join(__dirname+'/webapp/about.html'));
+});
+
+app.get('/control.html',function(req,res){
+    res.sendFile(path.join(__dirname+'/webapp/control.html'));
+});
+app.get('/history.html',function(req,res){
+    res.sendFile(path.join(__dirname+'/webapp/history.html'));
+});
+app.get('/home.html',function(req,res){
+    res.sendFile(path.join(__dirname+'/webapp/home.html'));
+});
+app.get('/last_info.html',function(req,res){
+    res.sendFile(path.join(__dirname+'/webapp/last_info.html'));
+});
 app.use('/users', users);
 app.use('/handlers', handlers);
 
