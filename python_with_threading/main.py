@@ -30,6 +30,7 @@ class Thr(Thread):
                     t = ""
                 res = {
                     "agent": self.doc['name'],
+                    "agent_id" : self.doc['_id'],
                     "time": t,
                     "cpu": cpu["cpu"],
                     "total": mem["total"],
